@@ -1,0 +1,26 @@
+from sqlalchemy import or_
+
+@app.route("/notices")
+def notices():
+
+    keyword = request.args.get("search")
+    category = request.args.get("category")
+
+    query = Notice.query
+
+    # 🔎 search filter
+    if keyword:
+        query = query.filter(
+            or_(
+                Notice.title.contains(keyword),
+                Notice.description.contains(keyword)
+            )
+        )
+
+    # 📂 category filter
+    if category and category != "All":
+        query = query.filter(Notice.category == category)
+
+    notices = query.order_by(Notice.id.desc()).all()
+
+    return render_template("notices.html", notices=notices)

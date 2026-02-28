@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="mb-4 text-center">Latest Notices</h3>
+
+<table class="table table-bordered table-hover text-center align-middle">
+
+<thead class="table-primary">
+<tr>
+<th>Memo</th>
+<th>Date</th>
+<th>Category</th>
+<th>Title</th>
+<th>Download</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for n in notices %}
+<tr>
+
+<td>{{ n.memo_no }}</td>
+
+<td>{{ n.date }}</td>
+
+<td>
+<span class="badge bg-secondary">
+{{ n.category }}
+</span>
+</td>
+
+<td>
+{{ n.title }}
+
+{% if n.created_at and (now - n.created_at).days < 3 %}
+<span class="badge bg-danger ms-2">NEW</span>
+{% endif %}
+</td>
+
+<td>
+<a href="{{ url_for('download_file', id=n.id) }}"
+class="btn btn-success btn-sm">
+⬇ Download
+</a>
+</td>
+
+</tr>
+
+{% else %}
+<tr>
+<td colspan="5" class="text-center">
+No Notices Available
+</td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+{% endblock %}

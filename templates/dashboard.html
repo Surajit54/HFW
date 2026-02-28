@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3 class="mb-4 text-center">Admin Dashboard</h3>
+
+<!-- ================= UPLOAD CARD ================= -->
+<div class="card mb-4 shadow-sm">
+<div class="card-header bg-primary text-white">
+Upload Notice (PDF Only)
+</div>
+
+<div class="card-body">
+
+<form method="POST" enctype="multipart/form-data">
+
+<div class="row">
+
+<div class="col-md-3">
+<input type="date" name="date"
+class="form-control" required>
+</div>
+
+<div class="col-md-4">
+<input type="text"
+name="title"
+placeholder="Notice Title"
+class="form-control"
+required>
+</div>
+
+<div class="col-md-3">
+<select name="category"
+class="form-control"
+required>
+<option value="">Category</option>
+<option>Recruitment</option>
+<option>Result</option>
+<option>Tender</option>
+<option>General</option>
+</select>
+</div>
+
+<div class="col-md-2">
+<input type="file"
+name="pdf"
+accept="application/pdf"
+class="form-control"
+required>
+</div>
+
+</div>
+
+<div class="mt-3 text-end">
+<button class="btn btn-success">
+Upload Notice
+</button>
+</div>
+
+</form>
+
+</div>
+</div>
+
+<!-- ================= NOTICE TABLE ================= -->
+
+<div class="card shadow-sm">
+<div class="card-header bg-dark text-white">
+Uploaded Notices
+</div>
+
+<div class="card-body">
+
+<table class="table table-bordered table-hover align-middle">
+
+<thead class="table-secondary">
+<tr>
+<th>Memo</th>
+<th>Date</th>
+<th>Category</th>
+<th>Title</th>
+<th>Downloads</th>
+<th width="180">Action</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for notice in notices %}
+<tr>
+
+<td>{{ notice.memo_no }}</td>
+<td>{{ notice.date }}</td>
+
+<td>
+<span class="badge bg-secondary">
+{{ notice.category }}
+</span>
+</td>
+
+<td>
+<a href="{{ url_for('download_file', id=notice.id) }}"
+target="_blank">
+{{ notice.title }}
+</a>
+</td>
+
+<td>
+<span class="badge bg-info">
+{{ notice.downloads }}
+</span>
+</td>
+
+<td>
+
+<a href="{{ url_for('edit_notice', id=notice.id) }}"
+class="btn btn-warning btn-sm">
+Edit
+</a>
+
+<a href="{{ url_for('delete_notice', id=notice.id) }}"
+class="btn btn-danger btn-sm"
+onclick="return confirm('Delete this notice?')">
+Delete
+</a>
+
+</td>
+
+</tr>
+
+{% else %}
+<tr>
+<td colspan="6" class="text-center">
+No Notices Uploaded
+</td>
+</tr>
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+</div>
+
+<div class="mt-4 text-end">
+<a href="{{ url_for('home') }}" class="btn btn-primary">
+⬅ Back to Home
+</a>
+</div>
+
+{% endblock %}
