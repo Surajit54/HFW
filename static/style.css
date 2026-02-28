@@ -1,9 +1,10 @@
 body{
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background:#f4f6f9;
     margin:0;
 }
 
+/* Main Container */
 .container{
     width:85%;
     margin:auto;
@@ -11,47 +12,59 @@ body{
     padding:25px;
     margin-top:40px;
     box-shadow:0 0 10px rgba(0,0,0,0.1);
+    border-radius:8px;
 }
 
+/* Heading */
 h2{
     text-align:center;
-    color:#003366;
+    color:#1b7f3a;   /* ✅ Green */
 }
 
+/* Input Box */
 input{
     width:100%;
     padding:10px;
     margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:5px;
 }
 
+/* Table */
 table{
     width:100%;
     border-collapse:collapse;
 }
 
+/* Table Header */
 th{
-    background:#003366;
+    background:#1b7f3a;
     color:white;
     padding:12px;
+    text-align:left;
 }
 
+/* Table Data */
 td{
     padding:10px;
     border-bottom:1px solid #ddd;
 }
 
+/* Hover Effect */
 tr:hover{
-    background:#f1f1f1;
+    background:#f1f8f4;   /* light green hover */
 }
 
+/* Button */
 .btn{
-    background:green;
+    background:#28a745;
     color:white;
     padding:6px 12px;
     text-decoration:none;
     border-radius:4px;
+    font-size:14px;
 }
 
 .btn:hover{
-    background:darkgreen;
+    background:#1e7e34;
 }
