@@ -7,44 +7,6 @@
 🟢 Career / Recruitment
 </h3>
 
-<!-- FILTER BAR -->
-<div class="card shadow-sm p-3 mb-4">
-<div class="row g-2">
-
-<div class="col-md-2">
-<label class="form-label">From Date</label>
-<input type="date" class="form-control">
-</div>
-
-<div class="col-md-2">
-<label class="form-label">To Date</label>
-<input type="date" class="form-control">
-</div>
-
-<div class="col-md-3">
-<label class="form-label">Subject</label>
-<input type="text" class="form-control" placeholder="Search subject">
-</div>
-
-<div class="col-md-3">
-<label class="form-label">Details</label>
-<input type="text" class="form-control" placeholder="Search details">
-</div>
-
-<div class="col-md-2 d-flex align-items-end">
-<button class="btn btn-primary w-100">Search</button>
-</div>
-
-</div>
-
-<small class="text-danger">
-Please click Archive to fetch data more than 3 months old
-</small>
-
-</div>
-
-
-<!-- NOTICE TABLE -->
 <div class="table-responsive">
 
 <table class="table table-hover align-middle">
@@ -54,8 +16,7 @@ Please click Archive to fetch data more than 3 months old
 <th>#</th>
 <th>Subject</th>
 <th>Details</th>
-<th>Start Date</th>
-<th>End Date</th>
+<th>Date</th>
 <th>File</th>
 </tr>
 </thead>
@@ -73,21 +34,21 @@ Please click Archive to fetch data more than 3 months old
 
 <td>{{ n.date }}</td>
 
-<td>{{ n.date }}</td>
-
 <td>
 
-<div class="small mb-1">
+<div class="small text-muted mb-1">
 <b>Type:</b> PDF
 </div>
 
-<a class="btn btn-sm btn-outline-primary"
+<a target="_blank"
+class="btn btn-sm btn-outline-primary"
 href="{{ url_for('download_file', id=n.id) }}">
-<i class="fa fa-download"></i>
+
+<i class="fa fa-download"></i> Download
 </a>
 
 {% if n.created_at and (now - n.created_at).days < 3 %}
-<span class="badge bg-danger">NEW</span>
+<span class="badge bg-danger ms-2">NEW</span>
 {% endif %}
 
 </td>
@@ -96,7 +57,7 @@ href="{{ url_for('download_file', id=n.id) }}">
 
 {% else %}
 <tr>
-<td colspan="6" class="text-center">
+<td colspan="5" class="text-center">
 No Recruitment Notices Available
 </td>
 </tr>
