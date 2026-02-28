@@ -1,17 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h3 class="mb-4 text-center">Latest Notices</h3>
+<div class="container-fluid pt-4">
 
-<table class="table table-bordered table-hover text-center align-middle">
+<h3 class="fw-bold mb-4">
+🟢 Career / Recruitment
+</h3>
 
-<thead class="table-primary">
+<!-- FILTER BAR -->
+<div class="card shadow-sm p-3 mb-4">
+<div class="row g-2">
+
+<div class="col-md-2">
+<label class="form-label">From Date</label>
+<input type="date" class="form-control">
+</div>
+
+<div class="col-md-2">
+<label class="form-label">To Date</label>
+<input type="date" class="form-control">
+</div>
+
+<div class="col-md-3">
+<label class="form-label">Subject</label>
+<input type="text" class="form-control" placeholder="Search subject">
+</div>
+
+<div class="col-md-3">
+<label class="form-label">Details</label>
+<input type="text" class="form-control" placeholder="Search details">
+</div>
+
+<div class="col-md-2 d-flex align-items-end">
+<button class="btn btn-primary w-100">Search</button>
+</div>
+
+</div>
+
+<small class="text-danger">
+Please click Archive to fetch data more than 3 months old
+</small>
+
+</div>
+
+
+<!-- NOTICE TABLE -->
+<div class="table-responsive">
+
+<table class="table table-hover align-middle">
+
+<thead style="background:#17a2b8;color:white;">
 <tr>
-<th>Memo</th>
-<th>Date</th>
-<th>Category</th>
-<th>Title</th>
-<th>Download</th>
+<th>#</th>
+<th>Subject</th>
+<th>Details</th>
+<th>Start Date</th>
+<th>End Date</th>
+<th>File</th>
 </tr>
 </thead>
 
@@ -20,37 +65,39 @@
 {% for n in notices %}
 <tr>
 
-<td>{{ n.memo_no }}</td>
+<td>{{ loop.index }}</td>
+
+<td>{{ n.title }}</td>
+
+<td>{{ n.category }}</td>
+
+<td>{{ n.date }}</td>
 
 <td>{{ n.date }}</td>
 
 <td>
-<span class="badge bg-secondary">
-{{ n.category }}
-</span>
-</td>
 
-<td>
-{{ n.title }}
+<div class="small mb-1">
+<b>Type:</b> PDF
+</div>
+
+<a class="btn btn-sm btn-outline-primary"
+href="{{ url_for('download_file', id=n.id) }}">
+<i class="fa fa-download"></i>
+</a>
 
 {% if n.created_at and (now - n.created_at).days < 3 %}
-<span class="badge bg-danger ms-2">NEW</span>
+<span class="badge bg-danger">NEW</span>
 {% endif %}
-</td>
 
-<td>
-<a href="{{ url_for('download_file', id=n.id) }}"
-class="btn btn-success btn-sm">
-⬇ Download
-</a>
 </td>
 
 </tr>
 
 {% else %}
 <tr>
-<td colspan="5" class="text-center">
-No Notices Available
+<td colspan="6" class="text-center">
+No Recruitment Notices Available
 </td>
 </tr>
 {% endfor %}
@@ -58,5 +105,9 @@ No Notices Available
 </tbody>
 
 </table>
+
+</div>
+
+</div>
 
 {% endblock %}
