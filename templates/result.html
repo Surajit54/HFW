@@ -1,0 +1,16 @@
+@app.route("/admin/publish/<int:app_id>")
+def publish_result(app_id):
+    if not session.get("admin"):
+        return redirect(url_for("admin_login"))
+
+    appx = Application.query.get_or_404(app_id)
+    appx.status = "Selected"
+    appx.roll_no = f"WBH{appx.id:05d}"
+    db.session.commit()
+    return redirect(url_for("admin_dashboard"))
+    {% if app and app.roll_no %}
+    <br>
+    <a href="{{ url_for('app_bp.result_pdf', roll=app.roll_no) }}">
+        Download Result PDF
+    </a>
+{% endif %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="main-section">
+
+    <div class="container text-center">
+
+        <div class="menu-box">
+
+            <h3>
+                <a href="{{ url_for('govt_order') }}" class="main-link">
+                    Govt Order / Notification / Circular
+                </a>
+            </h3>
+
+            <h3>
+                <a href="{{ url_for('student') }}" class="main-link">
+                    Recruitment Notice
+                </a>
+            </h3>
+
+            <h3>
+                <a href="https://swasthyasathi.gov.in"
+                   target="_blank"
+                   class="main-link">
+                    Swasthya Sathi
+                </a>
+            </h3>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

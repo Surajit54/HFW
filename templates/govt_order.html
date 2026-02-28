@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="card shadow text-center">
+
+    <div class="card-header bg-info text-white">
+        Government Orders
+    </div>
+
+    <div class="card-body">
+
+        <a href="{{ url_for('static', filename='govt_order.pdf') }}"
+           class="btn btn-danger"
+           target="_blank">
+
+           Download Govt Order
+
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

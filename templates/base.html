@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Health & Family Welfare Department</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<!-- ================= TOP GOV BAR ================= -->
+<div class="topbar">
+    Government of West Bengal
+</div>
+
+
+<!-- ================= HEADER ================= -->
+<div class="gov-header">
+<div class="container d-flex align-items-center">
+
+    <img src="{{ url_for('static', filename='logo.png') }}"
+         height="60">
+
+    <div class="ms-3">
+        <h4 class="dept-title">
+            Health & Family Welfare Department
+        </h4>
+
+        <small class="dept-sub">
+            Government of West Bengal
+        </small>
+    </div>
+<div class="top-header">
+
+    <div class="container d-flex justify-content-between align-items-center">
+
+        <!-- LEFT SIDE TITLE -->
+        <div class="site-title">
+            <h4 class="text-white m-0">
+                Health & Family Welfare Department
+            </h4>
+            <small class="text-white">
+                Government of West Bengal
+            </small>
+        </div>
+
+        <!-- RIGHT SIDE ADMIN LOGIN -->
+        <div>
+            <a href="{{ url_for('admin') }}" class="admin-btn">
+                Admin Login
+            </a>
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+
+
+<!-- ================= NOTICE TICKER ================= -->
+<div class="ticker-bar">
+<marquee>
+Latest Government Notices | Recruitment Updates | Health Services Information
+</marquee>
+</div>
+
+<!-- SUCCESS POPUP -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="container mt-3">
+      {% for message in messages %}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<!-- ================= PAGE CONTENT ================= -->
+<div class="container mt-4">
+{% block content %}{% endblock %}
+</div>
+
+
+<!-- ================= FOOTER ================= -->
+<footer class="gov-footer">
+
+<div class="container">
+<div class="row">
+
+<div class="col-md-4">
+<h5>Contact Us</h5>
+<p>
+Swasthya Bhawan, GN-29, Sector-V<br>
+Salt Lake, Kolkata - 700091<br>
+Phone: 033-2357-6000
+</p>
+</div>
+
+<div class="col-md-4">
+<h5>Quick Links</h5>
+<p>
+Recruitment<br>
+RTI<br>
+Health Services
+</p>
+</div>
+
+<div class="col-md-4">
+<h5>Important Links</h5>
+<p>
+National Portal<br>
+Feedback<br>
+Help Desk
+</p>
+</div>
+
+</div>
+
+<div class="text-center mt-3">
+© Health & Family Welfare Department, Govt of WB
+</div>
+
+</div>
+
+</footer>
+
+</body>
+</html>

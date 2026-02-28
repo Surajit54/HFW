@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Recruitment Notifications</h2>
+
+{% for notice in notices %}
+<div style="border:1px solid #ccc; padding:15px; margin-bottom:10px;">
+    <h3>{{ notice.title }}</h3>
+    <p><b>Order No:</b> {{ notice.order_no }}</p>
+    <p>{{ notice.description }}</p>
+    <a href="{{ url_for('static', filename='uploads/' + notice.pdf_file) }}" target="_blank">View PDF</a> |
+    <a href="{{ url_for('static', filename='uploads/' + notice.pdf_file) }}" download>Download</a>
+</div>
+{% endfor %}
+
+{% endblock %}
