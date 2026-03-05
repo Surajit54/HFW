@@ -1,26 +1,56 @@
-from sqlalchemy import or_
+{% extends "base.html" %}
 
-@app.route("/notices")
-def notices():
+{% block content %}
 
-    keyword = request.args.get("search")
-    category = request.args.get("category")
+<div class="container mt-4">
 
-    query = Notice.query
+<h4 class="mb-3">Notice Board</h4>
 
-    # 🔎 search filter
-    if keyword:
-        query = query.filter(
-            or_(
-                Notice.title.contains(keyword),
-                Notice.description.contains(keyword)
-            )
-        )
+<table class="table table-bordered table-striped">
 
-    # 📂 category filter
-    if category and category != "All":
-        query = query.filter(Notice.category == category)
+<thead class="table-dark">
 
-    notices = query.order_by(Notice.id.desc()).all()
+<tr>
+<th style="width:60px;">#</th>
+<th>Memo</th>
+<th style="width:150px;">Date</th>
+<th style="width:120px;">Download</th>
+</tr>
 
-    return render_template("notices.html", notices=notices)
+</thead>
+
+<tbody>
+
+{% for n in notices %}
+
+<tr>
+
+<td>{{ loop.index }}</td>
+
+<td>{{ n[1] }}</td>
+
+<td>{{ n[3] }}</td>
+
+<td>
+
+<a href="{{ url_for('static', filename='notices/' + n[2]) }}"
+class="btn btn-primary btn-sm"
+target="_blank">
+
+Download
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endblock %}
