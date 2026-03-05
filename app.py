@@ -71,9 +71,11 @@ def main_home():
 # NOTICE PAGE
 # =========================================================
 @app.route("/notices")
-def home():
+def notices():
 
-    notices = Notice.query.order_by(Notice.id.desc()).all()
+    notices = Notice.query.order_by(
+        Notice.id.desc()
+    ).all()
 
     return render_template(
         "home.html",
@@ -208,16 +210,21 @@ def edit_notice(id):
     notice = Notice.query.get_or_404(id)
 
     if request.method == "POST":
-        notice.title = request.form["title"]
-        notice.category = request.form["category"]
-        notice.date = request.form["date"]
+
+        notice.title = request.form.get("title")
+        notice.category = request.form.get("category")
+        notice.date = request.form.get("date")
 
         db.session.commit()
-        flash("Notice Updated")
+
+        flash("Notice Updated Successfully")
 
         return redirect(url_for("dashboard"))
 
-    return render_template("edit_notice.html", notice=notice)
+    return render_template(
+        "edit_notice.html",
+        notice=notice
+    )
 
 # =========================================================
 # DELETE NOTICE
@@ -230,7 +237,10 @@ def delete_notice(id):
 
     notice = Notice.query.get_or_404(id)
 
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], notice.filename)
+    file_path = os.path.join(
+        app.config["UPLOAD_FOLDER"],
+        notice.filename
+    )
 
     if os.path.exists(file_path):
         os.remove(file_path)
@@ -278,12 +288,13 @@ def download_recruit(id):
 # =========================================================
 @app.route("/logout")
 def logout():
+
     session.pop("admin", None)
+
     return redirect(url_for("main_home"))
 
 # =========================================================
 # RUN
 # =========================================================
 if __name__ == "__main__":
-    app.run(debug=True)
-
+    app.run(debug=True)s
