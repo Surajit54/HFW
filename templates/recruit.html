@@ -2,47 +2,45 @@
 
 {% block content %}
 
-<h4 class="mb-4">Career / Recruitment</h4>
+<h4>Career / Recruitment</h4>
 
-<div class="card p-3 mb-4">
-
-<form method="get">
-
-<div class="row">
-
-<div class="col-md-3">
-<label>From Date</label>
-<input type="date" class="form-control">
-</div>
-
-<div class="col-md-3">
-<label>To Date</label>
-<input type="date" class="form-control">
-</div>
-
-<div class="col-md-3">
-<label>Subject</label>
-<input type="text" class="form-control">
-</div>
-
-<div class="col-md-3 d-flex align-items-end">
-
-<button class="btn btn-success">
-Search
-</button>
-
-</div>
-
-</div>
-
-</form>
-
-</div>
-
-
-<table class="table table-bordered table-hover">
-
-<thead class="table-success">
+<table class="table table-bordered">
 
 <tr>
-<th>#</
+<th>#</th>
+<th>Post</th>
+<th>Details</th>
+<th>Start Date</th>
+<th>End Date</th>
+<th>Download</th>
+</tr>
+
+{% for r in recruitments %}
+
+<tr>
+
+<td>{{ loop.index }}</td>
+
+<td>{{ r.title }}</td>
+
+<td>{{ r.details }}</td>
+
+<td>{{ r.start_date }}</td>
+
+<td>{{ r.end_date }}</td>
+
+<td>
+
+<a href="/uploads/{{ r.filename }}" class="btn btn-primary">
+Download
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}
