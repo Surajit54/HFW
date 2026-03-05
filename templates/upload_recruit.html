@@ -2,19 +2,51 @@
 
 {% block content %}
 
-<h4>Upload Recruitment</h4>
+<h4 class="mb-4">Upload Recruitment</h4>
 
-<form method="POST" enctype="multipart/form-data">
+<form method="POST"
+action="{{ url_for('upload_recruit') }}"
+enctype="multipart/form-data">
 
-<input type="text" name="title" placeholder="Post Name" class="form-control mb-2">
+<div class="mb-3">
+<label>Post Name</label>
+<input type="text"
+name="title"
+class="form-control"
+required>
+</div>
 
-<textarea name="details" placeholder="Details" class="form-control mb-2"></textarea>
+<div class="mb-3">
+<label>Details</label>
+<textarea name="details"
+class="form-control"
+required></textarea>
+</div>
 
-<input type="date" name="start_date" class="form-control mb-2">
+<div class="mb-3">
+<label>Start Date</label>
+<input type="date"
+name="start_date"
+class="form-control"
+required>
+</div>
 
-<input type="date" name="end_date" class="form-control mb-2">
+<div class="mb-3">
+<label>End Date</label>
+<input type="date"
+name="end_date"
+class="form-control"
+required>
+</div>
 
-<input type="file" name="pdf" class="form-control mb-3">
+<div class="mb-3">
+<label>Upload PDF</label>
+<input type="file"
+name="pdf"
+accept="application/pdf"
+class="form-control"
+required>
+</div>
 
 <button class="btn btn-success">
 Upload Recruitment
