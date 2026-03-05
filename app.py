@@ -1,276 +1,183 @@
-from flask import Flask, render_template, redirect, url_for, request, session, send_from_directory, flash
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
-from datetime import datetime
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import os
+import sqlite3
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = "secret123"
 
-# ================= DATABASE =================
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
+DB = "database.db"
 
-# ================= UPLOAD =================
-UPLOAD_FOLDER = "uploads"
-ALLOWED_EXTENSIONS = {"pdf"}
+# ==============================
+# UPLOAD FOLDERS
+# ==============================
 
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+NOTICE_FOLDER = "static/notices"
 
-# ================= NOTICE MODEL =================
-class Notice(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    memo_no = db.Column(db.String(50), unique=True)
-    title = db.Column(db.String(200))
-    category = db.Column(db.String(50))
-    date = db.Column(db.String(20))
-    filename = db.Column(db.String(200))
-    downloads = db.Column(db.Integer, default=0)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+if not os.path.exists(NOTICE_FOLDER):
+    os.makedirs(NOTICE_FOLDER)
 
-# ================= RECRUITMENT MODEL =================
-class Recruitment(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(200))
-    details = db.Column(db.String(300))
-    start_date = db.Column(db.String(20))
-    end_date = db.Column(db.String(20))
-    filename = db.Column(db.String(200))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+# ==============================
+# DATABASE CREATE
+# ==============================
 
-with app.app_context():
-    db.create_all()
+def init_db():
 
-# ================= FUNCTIONS =================
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
 
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS notices(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        memo TEXT,
+        filename TEXT,
+        upload_date TEXT
+    )
+    """)
 
-def generate_memo_number():
-    year = datetime.now().year
-    last = Notice.query.order_by(Notice.id.desc()).first()
+    conn.commit()
+    conn.close()
 
-    if last and last.memo_no:
-        last_no = int(last.memo_no.split("/")[0])
-        new_no = last_no + 1
-    else:
-        new_no = 1
+init_db()
 
-    return f"{str(new_no).zfill(3)}/{year}"
+# ==============================
+# HOME
+# ==============================
 
-# =========================================================
-#                HOME PAGE
-# =========================================================
 @app.route("/")
-def main_home():
-    return render_template("main_home.html")
-
-
-# =========================================================
-#                     NOTICE PORTAL
-# =========================================================
-@app.route("/notices")
 def home():
+    return render_template("home.html")
 
-    notices = Notice.query.order_by(Notice.id.desc()).all()
+# ==============================
+# ADMIN LOGIN
+# ==============================
 
-    return render_template(
-        "home.html",
-        notices=notices
-    )
-
-
-# =========================================================
-#                     RECRUITMENT PAGE
-# =========================================================
-@app.route("/recruit")
-def recruit():
-
-    recruitments = Recruitment.query.order_by(
-        Recruitment.id.desc()
-    ).all()
-
-    return render_template(
-        "recruit.html",
-        recruitments=recruitments
-    )
-
-
-# =========================================================
-#                     ADMIN LOGIN
-# =========================================================
-@app.route("/admin", methods=["GET", "POST"])
-def admin():
+@app.route("/admin", methods=["GET","POST"])
+def admin_login():
 
     if request.method == "POST":
 
-        username = request.form.get("username")
-        password = request.form.get("password")
+        username = request.form["username"]
+        password = request.form["password"]
 
-        if username == "admin" and password == "1234":
+        if username == "admin" and password == "admin123":
+
             session["admin"] = True
             return redirect(url_for("dashboard"))
 
-        flash("Invalid Login")
+        else:
+            flash("Invalid Login")
 
     return render_template("admin_login.html")
 
+# ==============================
+# DASHBOARD
+# ==============================
 
-# =========================================================
-#                    ADMIN DASHBOARD
-# =========================================================
-@app.route("/dashboard", methods=["GET", "POST"])
+@app.route("/dashboard")
 def dashboard():
 
-    if not session.get("admin"):
-        return redirect(url_for("admin"))
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    return render_template("dashboard.html")
+
+# ==============================
+# NOTICE LIST
+# ==============================
+
+@app.route("/notices")
+def notices():
+
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM notices ORDER BY id DESC")
+
+    notices = c.fetchall()
+
+    conn.close()
+
+    return render_template("notices.html", notices=notices)
+
+# ==============================
+# UPLOAD NOTICE
+# ==============================
+
+@app.route("/upload_notice", methods=["GET","POST"])
+def upload_notice():
+
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
 
     if request.method == "POST":
 
-        title = request.form.get("title")
-        date = request.form.get("date")
-        category = request.form.get("category")
-        file = request.files.get("pdf")
+        memo = request.form.get("memo")
+        file = request.files.get("notice")
 
-        if file and allowed_file(file.filename):
+        if file and file.filename != "":
 
-            filename = secure_filename(file.filename)
-            filename = datetime.now().strftime("%Y%m%d%H%M%S_") + filename
+            filename = file.filename
 
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+            filepath = os.path.join(NOTICE_FOLDER, filename)
 
-            notice = Notice(
-                memo_no=generate_memo_number(),
-                title=title,
-                date=date,
-                category=category,
-                filename=filename
+            file.save(filepath)
+
+            upload_date = datetime.now().strftime("%d-%m-%Y")
+
+            conn = sqlite3.connect(DB)
+            c = conn.cursor()
+
+            c.execute(
+                "INSERT INTO notices (memo, filename, upload_date) VALUES (?,?,?)",
+                (memo, filename, upload_date)
             )
 
-            db.session.add(notice)
-            db.session.commit()
+            conn.commit()
+            conn.close()
 
             flash("Notice Uploaded Successfully")
 
-    notices = Notice.query.order_by(Notice.id.desc()).all()
+            return redirect(url_for("upload_notice"))
 
-    return render_template(
-        "dashboard.html",
-        notices=notices
-    )
+    return render_template("upload_notice.html")
 
+# ==============================
+# DELETE NOTICE
+# ==============================
 
-# =========================================================
-#                RECRUITMENT UPLOAD (ADMIN)
-# =========================================================
-@app.route("/upload_recruit", methods=["GET","POST"])
-def upload_recruit():
-
-    if not session.get("admin"):
-        return redirect(url_for("admin"))
-
-    if request.method == "POST":
-
-        title = request.form.get("title")
-        details = request.form.get("details")
-        start_date = request.form.get("start_date")
-        end_date = request.form.get("end_date")
-        file = request.files.get("pdf")
-
-        if file and allowed_file(file.filename):
-
-            filename = secure_filename(file.filename)
-            filename = datetime.now().strftime("%Y%m%d%H%M%S_") + filename
-
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
-
-            recruit = Recruitment(
-                title=title,
-                details=details,
-                start_date=start_date,
-                end_date=end_date,
-                filename=filename
-            )
-
-            db.session.add(recruit)
-            db.session.commit()
-
-            flash("Recruitment Uploaded Successfully")
-
-    return render_template("upload_recruit.html")
-
-
-# =========================================================
-#                     DOWNLOAD NOTICE
-# =========================================================
-@app.route("/download_notice/<int:id>")
-def download_notice(id):
-
-    notice = Notice.query.get_or_404(id)
-
-    notice.downloads += 1
-    db.session.commit()
-
-    return send_from_directory(
-        app.config["UPLOAD_FOLDER"],
-        notice.filename,
-        as_attachment=True
-    )
-
-
-# =========================================================
-#                DOWNLOAD RECRUITMENT PDF
-# =========================================================
-@app.route("/download_recruit/<int:id>")
-def download_recruit(id):
-
-    recruit = Recruitment.query.get_or_404(id)
-
-    return send_from_directory(
-        app.config["UPLOAD_FOLDER"],
-        recruit.filename,
-        as_attachment=True
-    )
-
-
-# =========================================================
-#                     DELETE NOTICE
-# =========================================================
-@app.route("/delete/<int:id>")
+@app.route("/delete_notice/<int:id>")
 def delete_notice(id):
 
-    if not session.get("admin"):
-        return redirect(url_for("admin"))
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
 
-    notice = Notice.query.get_or_404(id)
+    conn = sqlite3.connect(DB)
+    c = conn.cursor()
 
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], notice.filename)
+    c.execute("DELETE FROM notices WHERE id=?", (id,))
 
-    if os.path.exists(file_path):
-        os.remove(file_path)
-
-    db.session.delete(notice)
-    db.session.commit()
+    conn.commit()
+    conn.close()
 
     flash("Notice Deleted")
 
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("notices"))
 
+# ==============================
+# LOGOUT
+# ==============================
 
-# =========================================================
-#                     LOGOUT
-# =========================================================
 @app.route("/logout")
 def logout():
+
     session.pop("admin", None)
-    return redirect(url_for("main_home"))
 
+    return redirect(url_for("admin_login"))
 
-# =========================================================
-#                     RUN
-# =========================================================
+# ==============================
+# RUN SERVER
+# ==============================
+
 if __name__ == "__main__":
     app.run(debug=True)
-
