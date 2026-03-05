@@ -3,8 +3,10 @@
 
 <h3 class="mb-4 text-center">Admin Dashboard</h3>
 
-<!-- ================= UPLOAD CARD ================= -->
+<!-- ================= NOTICE UPLOAD ================= -->
+
 <div class="card mb-4 shadow-sm">
+
 <div class="card-header bg-primary text-white">
 Upload Notice (PDF Only)
 </div>
@@ -61,9 +63,79 @@ Upload Notice
 </div>
 </div>
 
+<!-- ================= RECRUITMENT UPLOAD ================= -->
+
+<div class="card mb-4 shadow-sm">
+
+<div class="card-header bg-success text-white">
+Upload Recruitment
+</div>
+
+<div class="card-body">
+
+<form method="POST"
+action="{{ url_for('upload_recruit') }}"
+enctype="multipart/form-data">
+
+<div class="row">
+
+<div class="col-md-3">
+<input type="text"
+name="title"
+placeholder="Post Name"
+class="form-control"
+required>
+</div>
+
+<div class="col-md-3">
+<input type="text"
+name="details"
+placeholder="Department / Details"
+class="form-control"
+required>
+</div>
+
+<div class="col-md-2">
+<input type="date"
+name="start_date"
+class="form-control"
+required>
+</div>
+
+<div class="col-md-2">
+<input type="date"
+name="end_date"
+class="form-control"
+required>
+</div>
+
+<div class="col-md-2">
+<input type="file"
+name="pdf"
+class="form-control"
+accept="application/pdf"
+required>
+</div>
+
+</div>
+
+<div class="mt-3 text-end">
+
+<button class="btn btn-success">
+Upload Recruitment
+</button>
+
+</div>
+
+</form>
+
+</div>
+</div>
+
 <!-- ================= NOTICE TABLE ================= -->
 
 <div class="card shadow-sm">
+
 <div class="card-header bg-dark text-white">
 Uploaded Notices
 </div>
@@ -73,6 +145,7 @@ Uploaded Notices
 <table class="table table-bordered table-hover align-middle">
 
 <thead class="table-secondary">
+
 <tr>
 <th>Memo</th>
 <th>Date</th>
@@ -81,14 +154,17 @@ Uploaded Notices
 <th>Downloads</th>
 <th width="180">Action</th>
 </tr>
+
 </thead>
 
 <tbody>
 
 {% for notice in notices %}
+
 <tr>
 
 <td>{{ notice.memo_no }}</td>
+
 <td>{{ notice.date }}</td>
 
 <td>
@@ -98,8 +174,7 @@ Uploaded Notices
 </td>
 
 <td>
-<a href="{{ url_for('download_file', id=notice.id) }}"
-target="_blank">
+<a href="{{ url_for('download_notice', id=notice.id) }}" target="_blank">
 {{ notice.title }}
 </a>
 </td>
@@ -128,11 +203,13 @@ Delete
 </tr>
 
 {% else %}
+
 <tr>
 <td colspan="6" class="text-center">
 No Notices Uploaded
 </td>
 </tr>
+
 {% endfor %}
 
 </tbody>
@@ -143,9 +220,11 @@ No Notices Uploaded
 </div>
 
 <div class="mt-4 text-end">
+
 <a href="{{ url_for('home') }}" class="btn btn-primary">
 ⬅ Back to Home
 </a>
+
 </div>
 
 {% endblock %}
