@@ -19,7 +19,7 @@ ALLOWED_EXTENSIONS = {"pdf"}
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ================= MODEL =================
+# ================= NOTICE MODEL =================
 class Notice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     memo_no = db.Column(db.String(50), unique=True)
@@ -28,6 +28,16 @@ class Notice(db.Model):
     date = db.Column(db.String(20))
     filename = db.Column(db.String(200))
     downloads = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# ================= RECRUITMENT MODEL =================
+class Recruitment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200))
+    details = db.Column(db.String(300))
+    start_date = db.Column(db.String(20))
+    end_date = db.Column(db.String(20))
+    filename = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 with app.app_context():
@@ -63,6 +73,7 @@ def main_home():
 # =========================================================
 @app.route("/notices")
 def home():
+
     notices = Notice.query.order_by(Notice.id.desc()).all()
     now = datetime.utcnow()
 
@@ -74,12 +85,29 @@ def home():
 
 
 # =========================================================
+#                     RECRUITMENT PAGE
+# =========================================================
+@app.route("/recruit")
+def recruit():
+
+    recruitments = Recruitment.query.order_by(
+        Recruitment.id.desc()
+    ).all()
+
+    return render_template(
+        "recruit.html",
+        recruitments=recruitments
+    )
+
+
+# =========================================================
 #                     ADMIN LOGIN
 # =========================================================
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
 
     if request.method == "POST":
+
         username = request.form.get("username")
         password = request.form.get("password")
 
@@ -101,7 +129,7 @@ def dashboard():
     if not session.get("admin"):
         return redirect(url_for("admin"))
 
-    # ---------- UPLOAD ----------
+    # ---------- NOTICE UPLOAD ----------
     if request.method == "POST":
 
         title = request.form.get("title")
@@ -143,6 +171,46 @@ def dashboard():
         total_notices=total_notices,
         total_downloads=total_downloads
     )
+
+
+# =========================================================
+#                RECRUITMENT UPLOAD (ADMIN)
+# =========================================================
+@app.route("/upload_recruit", methods=["GET","POST"])
+def upload_recruit():
+
+    if not session.get("admin"):
+        return redirect(url_for("admin"))
+
+    if request.method == "POST":
+
+        title = request.form.get("title")
+        details = request.form.get("details")
+        start_date = request.form.get("start_date")
+        end_date = request.form.get("end_date")
+        file = request.files.get("pdf")
+
+        if file and allowed_file(file.filename):
+
+            filename = secure_filename(file.filename)
+            filename = datetime.now().strftime("%Y%m%d%H%M%S_") + filename
+
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+            recruit = Recruitment(
+                title=title,
+                details=details,
+                start_date=start_date,
+                end_date=end_date,
+                filename=filename
+            )
+
+            db.session.add(recruit)
+            db.session.commit()
+
+            flash("Recruitment Uploaded Successfully")
+
+    return render_template("upload_recruit.html")
 
 
 # =========================================================
@@ -194,7 +262,7 @@ def delete_notice(id):
 
 
 # =========================================================
-#                     DOWNLOAD
+#                     DOWNLOAD FILE
 # =========================================================
 @app.route("/download/<int:id>")
 def download_file(id):
