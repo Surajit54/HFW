@@ -106,7 +106,7 @@ def admin():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        if username == "admin" and password == "1234":
+        if username == "admin" and password == "Mamam5424":
             session["admin"] = True
             return redirect(url_for("dashboard"))
 
@@ -286,3 +286,4 @@ def logout():
 # =========================================================
 if __name__ == "__main__":
     app.run(debug=True)
+
