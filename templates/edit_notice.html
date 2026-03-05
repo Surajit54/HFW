@@ -1,20 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Edit Notice</h2>
+<h3 class="mb-4">Edit Notice</h3>
 
 <form method="POST">
-    <input type="date" name="date" value="{{ notice[2] }}" required><br><br>
 
-    <input type="text" name="title" value="{{ notice[1] }}" required><br><br>
+<div class="mb-3">
+<label>Date</label>
+<input type="date"
+name="date"
+value="{{ notice.date }}"
+class="form-control"
+required>
+</div>
 
-    <select name="category">
-        <option value="GO" {% if notice[3]=='GO' %}selected{% endif %}>GO</option>
-        <option value="Recruitment" {% if notice[3]=='Recruitment' %}selected{% endif %}>Recruitment</option>
-        <option value="Result" {% if notice[3]=='Result' %}selected{% endif %}>Result</option>
-    </select><br><br>
+<div class="mb-3">
+<label>Title</label>
+<input type="text"
+name="title"
+value="{{ notice.title }}"
+class="form-control"
+required>
+</div>
 
-    <button type="submit">Update</button>
+<div class="mb-3">
+<label>Category</label>
+
+<select name="category" class="form-control">
+
+<option value="GO"
+{% if notice.category=='GO' %}selected{% endif %}>
+GO
+</option>
+
+<option value="Recruitment"
+{% if notice.category=='Recruitment' %}selected{% endif %}>
+Recruitment
+</option>
+
+<option value="Result"
+{% if notice.category=='Result' %}selected{% endif %}>
+Result
+</option>
+
+<option value="Tender"
+{% if notice.category=='Tender' %}selected{% endif %}>
+Tender
+</option>
+
+<option value="General"
+{% if notice.category=='General' %}selected{% endif %}>
+General
+</option>
+
+</select>
+
+</div>
+
+<button class="btn btn-warning">
+Update Notice
+</button>
+
 </form>
 
 {% endblock %}
