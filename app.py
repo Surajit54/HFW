@@ -61,7 +61,7 @@ def generate_memo_number():
     return f"{str(new_no).zfill(3)}/{year}"
 
 # =========================================================
-#                HEALTH DEPARTMENT MAIN PAGE
+#                HOME PAGE
 # =========================================================
 @app.route("/")
 def main_home():
@@ -75,12 +75,10 @@ def main_home():
 def home():
 
     notices = Notice.query.order_by(Notice.id.desc()).all()
-    now = datetime.utcnow()
 
     return render_template(
         "home.html",
-        notices=notices,
-        now=now
+        notices=notices
     )
 
 
@@ -129,7 +127,6 @@ def dashboard():
     if not session.get("admin"):
         return redirect(url_for("admin"))
 
-    # ---------- NOTICE UPLOAD ----------
     if request.method == "POST":
 
         title = request.form.get("title")
@@ -159,17 +156,9 @@ def dashboard():
 
     notices = Notice.query.order_by(Notice.id.desc()).all()
 
-    total_notices = Notice.query.count()
-
-    total_downloads = db.session.query(
-        db.func.sum(Notice.downloads)
-    ).scalar() or 0
-
     return render_template(
         "dashboard.html",
-        notices=notices,
-        total_notices=total_notices,
-        total_downloads=total_downloads
+        notices=notices
     )
 
 
@@ -214,27 +203,36 @@ def upload_recruit():
 
 
 # =========================================================
-#                     EDIT NOTICE
+#                     DOWNLOAD NOTICE
 # =========================================================
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
-def edit_notice(id):
-
-    if not session.get("admin"):
-        return redirect(url_for("admin"))
+@app.route("/download_notice/<int:id>")
+def download_notice(id):
 
     notice = Notice.query.get_or_404(id)
 
-    if request.method == "POST":
-        notice.title = request.form["title"]
-        notice.category = request.form["category"]
-        notice.date = request.form["date"]
+    notice.downloads += 1
+    db.session.commit()
 
-        db.session.commit()
-        flash("Notice Updated")
+    return send_from_directory(
+        app.config["UPLOAD_FOLDER"],
+        notice.filename,
+        as_attachment=True
+    )
 
-        return redirect(url_for("dashboard"))
 
-    return render_template("edit_notice.html", notice=notice)
+# =========================================================
+#                DOWNLOAD RECRUITMENT PDF
+# =========================================================
+@app.route("/download_recruit/<int:id>")
+def download_recruit(id):
+
+    recruit = Recruitment.query.get_or_404(id)
+
+    return send_from_directory(
+        app.config["UPLOAD_FOLDER"],
+        recruit.filename,
+        as_attachment=True
+    )
 
 
 # =========================================================
@@ -259,24 +257,6 @@ def delete_notice(id):
     flash("Notice Deleted")
 
     return redirect(url_for("dashboard"))
-
-
-# =========================================================
-#                     DOWNLOAD FILE
-# =========================================================
-@app.route("/download/<int:id>")
-def download_file(id):
-
-    notice = Notice.query.get_or_404(id)
-
-    notice.downloads += 1
-    db.session.commit()
-
-    return send_from_directory(
-        app.config["UPLOAD_FOLDER"],
-        notice.filename,
-        as_attachment=True
-    )
 
 
 # =========================================================
