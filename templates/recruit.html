@@ -31,7 +31,7 @@
 
 <td>
 
-<a href="/uploads/{{ r.filename }}" class="btn btn-primary">
+<a href="{{ url_for('static', filename='uploads/' + r.filename) }}" class="btn btn-primary">
 Download
 </a>
 
