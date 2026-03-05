@@ -8,21 +8,11 @@ app.secret_key = "secret123"
 
 DB = "database.db"
 
-# ==============================
-# UPLOAD FOLDERS
-# ==============================
-
-NOTICE_FOLDER = "static/notices"
-
-if not os.path.exists(NOTICE_FOLDER):
-    os.makedirs(NOTICE_FOLDER)
-
-# ==============================
+# -----------------------------
 # DATABASE CREATE
-# ==============================
+# -----------------------------
 
 def init_db():
-
     conn = sqlite3.connect(DB)
     c = conn.cursor()
 
@@ -40,17 +30,26 @@ def init_db():
 
 init_db()
 
-# ==============================
+# -----------------------------
+# UPLOAD FOLDER
+# -----------------------------
+
+UPLOAD_FOLDER = "static/notices"
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+# -----------------------------
 # HOME
-# ==============================
+# -----------------------------
 
 @app.route("/")
 def home():
     return render_template("home.html")
 
-# ==============================
+# -----------------------------
 # ADMIN LOGIN
-# ==============================
+# -----------------------------
 
 @app.route("/admin", methods=["GET","POST"])
 def admin_login():
@@ -61,30 +60,29 @@ def admin_login():
         password = request.form["password"]
 
         if username == "admin" and password == "admin123":
-
             session["admin"] = True
-            return redirect(url_for("dashboard"))
+            return redirect("/dashboard")
 
         else:
             flash("Invalid Login")
 
     return render_template("admin_login.html")
 
-# ==============================
+# -----------------------------
 # DASHBOARD
-# ==============================
+# -----------------------------
 
 @app.route("/dashboard")
 def dashboard():
 
     if "admin" not in session:
-        return redirect(url_for("admin_login"))
+        return redirect("/admin")
 
     return render_template("dashboard.html")
 
-# ==============================
+# -----------------------------
 # NOTICE LIST
-# ==============================
+# -----------------------------
 
 @app.route("/notices")
 def notices():
@@ -100,26 +98,26 @@ def notices():
 
     return render_template("notices.html", notices=notices)
 
-# ==============================
+# -----------------------------
 # UPLOAD NOTICE
-# ==============================
+# -----------------------------
 
 @app.route("/upload_notice", methods=["GET","POST"])
 def upload_notice():
 
     if "admin" not in session:
-        return redirect(url_for("admin_login"))
+        return redirect("/admin")
 
     if request.method == "POST":
 
         memo = request.form.get("memo")
         file = request.files.get("notice")
 
-        if file and file.filename != "":
+        if file:
 
             filename = file.filename
 
-            filepath = os.path.join(NOTICE_FOLDER, filename)
+            filepath = os.path.join(UPLOAD_FOLDER, filename)
 
             file.save(filepath)
 
@@ -138,19 +136,16 @@ def upload_notice():
 
             flash("Notice Uploaded Successfully")
 
-            return redirect(url_for("upload_notice"))
+            return redirect("/upload_notice")
 
     return render_template("upload_notice.html")
 
-# ==============================
+# -----------------------------
 # DELETE NOTICE
-# ==============================
+# -----------------------------
 
 @app.route("/delete_notice/<int:id>")
 def delete_notice(id):
-
-    if "admin" not in session:
-        return redirect(url_for("admin_login"))
 
     conn = sqlite3.connect(DB)
     c = conn.cursor()
@@ -160,24 +155,22 @@ def delete_notice(id):
     conn.commit()
     conn.close()
 
-    flash("Notice Deleted")
+    return redirect("/notices")
 
-    return redirect(url_for("notices"))
-
-# ==============================
+# -----------------------------
 # LOGOUT
-# ==============================
+# -----------------------------
 
 @app.route("/logout")
 def logout():
 
     session.pop("admin", None)
 
-    return redirect(url_for("admin_login"))
+    return redirect("/admin")
 
-# ==============================
-# RUN SERVER
-# ==============================
+# -----------------------------
+# RUN APP
+# -----------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)
