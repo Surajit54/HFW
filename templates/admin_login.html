@@ -3,23 +3,34 @@
 
 <h3 class="text-center mb-4">Admin Login</h3>
 
-<form method="POST" class="w-50 mx-auto">
+<div class="card shadow-sm mx-auto" style="max-width:400px">
 
-<input class="form-control mb-3"
+<div class="card-body">
+
+<form method="POST">
+
+<div class="mb-3">
+<label>Username</label>
+<input class="form-control"
 name="username"
-placeholder="Username"
 required>
+</div>
 
+<div class="mb-3">
+<label>Password</label>
 <input type="password"
-class="form-control mb-3"
+class="form-control"
 name="password"
-placeholder="Password"
 required>
+</div>
 
 <button class="btn btn-primary w-100">
 Login
 </button>
 
 </form>
+
+</div>
+</div>
 
 {% endblock %}
