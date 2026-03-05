@@ -4,7 +4,46 @@ body{
     margin:0;
 }
 
-/* Main Container */
+/* ===== GOVT HEADER ===== */
+
+.gov-header{
+    background:#0b3d6d;
+    color:white;
+    padding:12px;
+}
+
+.gov-header img{
+    height:60px;
+    margin-right:15px;
+}
+
+/* ===== WBHRB TITLE ===== */
+
+.info-bar{
+    text-align:center;
+    background:white;
+    padding:12px;
+    border-bottom:1px solid #ddd;
+}
+
+.info-bar .title{
+    font-size:24px;
+    font-weight:bold;
+    color:#0b3d6d;
+}
+
+.info-bar .official{
+    font-size:18px;
+    color:#0d5cb6;
+}
+
+.info-bar .warning{
+    font-size:14px;
+    color:#333;
+}
+
+/* ===== MAIN CONTAINER ===== */
+
 .container{
     width:85%;
     margin:auto;
@@ -15,13 +54,15 @@ body{
     border-radius:8px;
 }
 
-/* Heading */
+/* ===== HEADING ===== */
+
 h2{
     text-align:center;
-    color:#1b7f3a;   /* ✅ Green */
+    color:#0b3d6d;
 }
 
-/* Input Box */
+/* ===== SEARCH BOX ===== */
+
 input{
     width:100%;
     padding:10px;
@@ -30,34 +71,39 @@ input{
     border-radius:5px;
 }
 
-/* Table */
+/* ===== TABLE ===== */
+
 table{
     width:100%;
     border-collapse:collapse;
 }
 
-/* Table Header */
+/* TABLE HEADER */
+
 th{
-    background:#1b7f3a;
+    background:#0b3d6d;
     color:white;
     padding:12px;
     text-align:left;
 }
 
-/* Table Data */
+/* TABLE DATA */
+
 td{
     padding:10px;
     border-bottom:1px solid #ddd;
 }
 
-/* Hover Effect */
+/* HOVER */
+
 tr:hover{
-    background:#f1f8f4;   /* light green hover */
+    background:#eef4fb;
 }
 
-/* Button */
+/* BUTTON */
+
 .btn{
-    background:#28a745;
+    background:#0d6efd;
     color:white;
     padding:6px 12px;
     text-decoration:none;
@@ -66,5 +112,15 @@ tr:hover{
 }
 
 .btn:hover{
-    background:#1e7e34;
+    background:#084298;
+}
+
+/* ===== FOOTER ===== */
+
+.footer{
+    margin-top:60px;
+    background:#0b3d6d;
+    color:white;
+    text-align:center;
+    padding:10px;
 }
