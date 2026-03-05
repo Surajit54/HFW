@@ -34,7 +34,7 @@ class Notice(db.Model):
 class Recruitment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
-    details = db.Column(db.String(500))
+    details = db.Column(db.String(300))
     start_date = db.Column(db.String(20))
     end_date = db.Column(db.String(20))
     filename = db.Column(db.String(200))
@@ -60,7 +60,6 @@ def generate_memo_number():
 
     return f"{str(new_no).zfill(3)}/{year}"
 
-
 # =========================================================
 #                HEALTH DEPARTMENT MAIN PAGE
 # =========================================================
@@ -74,6 +73,7 @@ def main_home():
 # =========================================================
 @app.route("/notices")
 def home():
+
     notices = Notice.query.order_by(Notice.id.desc()).all()
     now = datetime.utcnow()
 
@@ -107,6 +107,7 @@ def recruit():
 def admin():
 
     if request.method == "POST":
+
         username = request.form.get("username")
         password = request.form.get("password")
 
@@ -128,6 +129,7 @@ def dashboard():
     if not session.get("admin"):
         return redirect(url_for("admin"))
 
+    # ---------- NOTICE UPLOAD ----------
     if request.method == "POST":
 
         title = request.form.get("title")
@@ -172,7 +174,7 @@ def dashboard():
 
 
 # =========================================================
-#              RECRUITMENT UPLOAD (ADMIN)
+#                RECRUITMENT UPLOAD (ADMIN)
 # =========================================================
 @app.route("/upload_recruit", methods=["GET","POST"])
 def upload_recruit():
@@ -206,9 +208,57 @@ def upload_recruit():
             db.session.add(recruit)
             db.session.commit()
 
-            flash("Recruitment Uploaded")
+            flash("Recruitment Uploaded Successfully")
 
     return render_template("upload_recruit.html")
+
+
+# =========================================================
+#                     EDIT NOTICE
+# =========================================================
+@app.route("/edit/<int:id>", methods=["GET", "POST"])
+def edit_notice(id):
+
+    if not session.get("admin"):
+        return redirect(url_for("admin"))
+
+    notice = Notice.query.get_or_404(id)
+
+    if request.method == "POST":
+        notice.title = request.form["title"]
+        notice.category = request.form["category"]
+        notice.date = request.form["date"]
+
+        db.session.commit()
+        flash("Notice Updated")
+
+        return redirect(url_for("dashboard"))
+
+    return render_template("edit_notice.html", notice=notice)
+
+
+# =========================================================
+#                     DELETE NOTICE
+# =========================================================
+@app.route("/delete/<int:id>")
+def delete_notice(id):
+
+    if not session.get("admin"):
+        return redirect(url_for("admin"))
+
+    notice = Notice.query.get_or_404(id)
+
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], notice.filename)
+
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
+    db.session.delete(notice)
+    db.session.commit()
+
+    flash("Notice Deleted")
+
+    return redirect(url_for("dashboard"))
 
 
 # =========================================================
