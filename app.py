@@ -34,7 +34,8 @@ init_db()
 # UPLOAD FOLDER
 # -----------------------------
 
-UPLOAD_FOLDER = "static/notices"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "static", "notices")
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -113,10 +114,9 @@ def upload_notice():
         memo = request.form.get("memo")
         file = request.files.get("notice")
 
-        if file:
+        if file and file.filename != "":
 
             filename = file.filename
-
             filepath = os.path.join(UPLOAD_FOLDER, filename)
 
             file.save(filepath)
