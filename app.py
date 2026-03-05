@@ -61,31 +61,27 @@ def generate_memo_number():
     return f"{str(new_no).zfill(3)}/{year}"
 
 # =========================================================
-#                HEALTH DEPARTMENT MAIN PAGE
+# HOME PAGE
 # =========================================================
 @app.route("/")
 def main_home():
     return render_template("main_home.html")
 
-
 # =========================================================
-#                     NOTICE PORTAL
+# NOTICE PAGE
 # =========================================================
 @app.route("/notices")
 def home():
 
     notices = Notice.query.order_by(Notice.id.desc()).all()
-    now = datetime.utcnow()
 
     return render_template(
         "home.html",
-        notices=notices,
-        now=now
+        notices=notices
     )
 
-
 # =========================================================
-#                     RECRUITMENT PAGE
+# RECRUITMENT PAGE
 # =========================================================
 @app.route("/recruit")
 def recruit():
@@ -99,9 +95,8 @@ def recruit():
         recruitments=recruitments
     )
 
-
 # =========================================================
-#                     ADMIN LOGIN
+# ADMIN LOGIN
 # =========================================================
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
@@ -119,9 +114,8 @@ def admin():
 
     return render_template("admin_login.html")
 
-
 # =========================================================
-#                    ADMIN DASHBOARD
+# ADMIN DASHBOARD
 # =========================================================
 @app.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
@@ -129,7 +123,6 @@ def dashboard():
     if not session.get("admin"):
         return redirect(url_for("admin"))
 
-    # ---------- NOTICE UPLOAD ----------
     if request.method == "POST":
 
         title = request.form.get("title")
@@ -159,22 +152,13 @@ def dashboard():
 
     notices = Notice.query.order_by(Notice.id.desc()).all()
 
-    total_notices = Notice.query.count()
-
-    total_downloads = db.session.query(
-        db.func.sum(Notice.downloads)
-    ).scalar() or 0
-
     return render_template(
         "dashboard.html",
-        notices=notices,
-        total_notices=total_notices,
-        total_downloads=total_downloads
+        notices=notices
     )
 
-
 # =========================================================
-#                RECRUITMENT UPLOAD (ADMIN)
+# RECRUITMENT UPLOAD
 # =========================================================
 @app.route("/upload_recruit", methods=["GET","POST"])
 def upload_recruit():
@@ -212,9 +196,8 @@ def upload_recruit():
 
     return render_template("upload_recruit.html")
 
-
 # =========================================================
-#                     EDIT NOTICE
+# EDIT NOTICE
 # =========================================================
 @app.route("/edit/<int:id>", methods=["GET", "POST"])
 def edit_notice(id):
@@ -236,9 +219,8 @@ def edit_notice(id):
 
     return render_template("edit_notice.html", notice=notice)
 
-
 # =========================================================
-#                     DELETE NOTICE
+# DELETE NOTICE
 # =========================================================
 @app.route("/delete/<int:id>")
 def delete_notice(id):
@@ -260,9 +242,8 @@ def delete_notice(id):
 
     return redirect(url_for("dashboard"))
 
-
 # =========================================================
-#                     DOWNLOAD FILE
+# DOWNLOAD NOTICE
 # =========================================================
 @app.route("/download/<int:id>")
 def download_file(id):
@@ -278,18 +259,30 @@ def download_file(id):
         as_attachment=True
     )
 
+# =========================================================
+# DOWNLOAD RECRUITMENT
+# =========================================================
+@app.route("/download_recruit/<int:id>")
+def download_recruit(id):
+
+    recruit = Recruitment.query.get_or_404(id)
+
+    return send_from_directory(
+        app.config["UPLOAD_FOLDER"],
+        recruit.filename,
+        as_attachment=True
+    )
 
 # =========================================================
-#                     LOGOUT
+# LOGOUT
 # =========================================================
 @app.route("/logout")
 def logout():
     session.pop("admin", None)
     return redirect(url_for("main_home"))
 
-
 # =========================================================
-#                     RUN
+# RUN
 # =========================================================
 if __name__ == "__main__":
     app.run(debug=True)
