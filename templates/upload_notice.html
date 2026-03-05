@@ -1,30 +1,36 @@
 @app.route("/upload_notice", methods=["GET", "POST"])
 def upload_notice():
 
+    if not session.get("admin"):
+        return redirect(url_for("admin"))
+
     if request.method == "POST":
 
-        memo = request.form.get("memo")
-        file = request.files["notice"]
+        title = request.form.get("title")
+        category = request.form.get("category")
+        date = request.form.get("date")
+        file = request.files.get("pdf")
 
-        if file:
-            filename = file.filename
-            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-            file.save(filepath)
+        if file and allowed_file(file.filename):
 
-            upload_date = datetime.now().strftime("%d-%m-%Y")
+            filename = secure_filename(file.filename)
+            filename = datetime.now().strftime("%Y%m%d%H%M%S_") + filename
 
-            conn = sqlite3.connect(DB)
-            c = conn.cursor()
-            c.execute(
-                "INSERT INTO notices (memo, filename, upload_date) VALUES (?,?,?)",
-                (memo, filename, upload_date)
+            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+
+            notice = Notice(
+                memo_no=generate_memo_number(),
+                title=title,
+                category=category,
+                date=date,
+                filename=filename
             )
-            conn.commit()
-            conn.close()
 
-            # ✅ SUCCESS POPUP MESSAGE
+            db.session.add(notice)
+            db.session.commit()
+
             flash("Notice Uploaded Successfully ✅")
 
-            return redirect(url_for("upload_notice"))
+            return redirect(url_for("dashboard"))
 
     return render_template("upload_notice.html")
