@@ -1,73 +1,57 @@
 {% extends "base.html" %}
+
 {% block content %}
 
-<div class="container-fluid pt-4">
+<div class="container mt-4">
 
-<h3 class="fw-bold mb-4">
-🟢 Career / Recruitment
-</h3>
+<h4 class="mb-3">Notice Board</h4>
 
-<div class="table-responsive">
+<table class="table table-bordered table-striped">
 
-<table class="table table-hover align-middle">
+<thead class="table-dark">
 
-<thead style="background:#17a2b8;color:white;">
 <tr>
-<th>#</th>
-<th>Subject</th>
-<th>Details</th>
-<th>Date</th>
-<th>File</th>
+<th style="width:60px;">#</th>
+<th>Memo No</th>
+<th>Title</th>
+<th style="width:150px;">Date</th>
+<th style="width:120px;">Download</th>
 </tr>
+
 </thead>
 
 <tbody>
 
 {% for n in notices %}
+
 <tr>
 
 <td>{{ loop.index }}</td>
 
-<td>{{ n.title }}</td>
+<td>{{ n.memo_no }}</td>
 
-<td>{{ n.category }}</td>
+<td>{{ n.title }}</td>
 
 <td>{{ n.date }}</td>
 
 <td>
 
-<div class="small text-muted mb-1">
-<b>Type:</b> PDF
-</div>
+<a href="{{ url_for('download_file', id=n.id) }}"
+class="btn btn-primary btn-sm">
 
-<a target="_blank"
-class="btn btn-sm btn-outline-primary"
-href="{{ url_for('download_file', id=n.id) }}">
+Download
 
-<i class="fa fa-download"></i> Download
 </a>
 
-{% if n.created_at and (now - n.created_at).days < 3 %}
-<span class="badge bg-danger ms-2">NEW</span>
-{% endif %}
-
 </td>
 
 </tr>
 
-{% else %}
-<tr>
-<td colspan="5" class="text-center">
-No Recruitment Notices Available
-</td>
-</tr>
 {% endfor %}
 
 </tbody>
 
 </table>
-
-</div>
 
 </div>
 
