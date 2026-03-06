@@ -70,8 +70,9 @@ def notices():
     ).all()
 
     return render_template(
-        "home.html",
-        notices=notices
+    "notices.html",
+    notices=notices
+)
     )
 
 
@@ -182,3 +183,4 @@ def logout():
 # ================= RUN =================
 if __name__ == "__main__":
     app.run(debug=True)
+
