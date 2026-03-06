@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+<h3 class="mb-4">Edit Notice</h3>
+
+<form method="POST">
+
+<div class="mb-3">
+<label class="form-label">Date</label>
+
+<input type="date"
+name="date"
+value="{{ notice.date }}"
+class="form-control"
+required>
+
+</div>
+
+
+<div class="mb-3">
+<label class="form-label">Title</label>
+
+<input type="text"
+name="title"
+value="{{ notice.title }}"
+class="form-control"
+required>
+
+</div>
+
+
+<div class="mb-3">
+
+<label class="form-label">Category</label>
+
+<select name="category" class="form-control">
+
+<option value="GO" {% if notice.category == "GO" %}selected{% endif %}>
+GO
+</option>
+
+<option value="Recruitment" {% if notice.category == "Recruitment" %}selected{% endif %}>
+Recruitment
+</option>
+
+<option value="Result" {% if notice.category == "Result" %}selected{% endif %}>
+Result
+</option>
+
+<option value="Tender" {% if notice.category == "Tender" %}selected{% endif %}>
+Tender
+</option>
+
+<option value="General" {% if notice.category == "General" %}selected{% endif %}>
+General
+</option>
+
+</select>
+
+</div>
+
+<button type="submit" class="btn btn-warning">
+Update Notice
+</button>
+
+<a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+Cancel
+</a>
+
+</form>
+
+</div>
+
+{% endblock %}
