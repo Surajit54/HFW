@@ -65,16 +65,12 @@ def main_home():
 @app.route("/notices")
 def notices():
 
-    notices = Notice.query.order_by(
-        Notice.id.desc()
-    ).all()
+    notices = Notice.query.order_by(Notice.id.desc()).all()
 
     return render_template(
-    "notices.html",
-    notices=notices
-)
+        "notices.html",
+        notices=notices
     )
-
 
 # ================= ADMIN LOGIN =================
 @app.route("/admin", methods=["GET","POST"])
@@ -183,4 +179,5 @@ def logout():
 # ================= RUN =================
 if __name__ == "__main__":
     app.run(debug=True)
+
 
