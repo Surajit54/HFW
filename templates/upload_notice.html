@@ -1,36 +1,26 @@
-@app.route("/upload_notice", methods=["GET", "POST"])
-def upload_notice():
+{% extends "base.html" %}
+{% block content %}
 
-    if not session.get("admin"):
-        return redirect(url_for("admin"))
+<h3 class="text-center mb-4">Upload Notice</h3>
 
-    if request.method == "POST":
+<form method="POST" enctype="multipart/form-data" class="w-50 mx-auto">
 
-        title = request.form.get("title")
-        category = request.form.get("category")
-        date = request.form.get("date")
-        file = request.files.get("pdf")
+<input type="text"
+class="form-control mb-3"
+name="memo"
+placeholder="Notice Memo No"
+required>
 
-        if file and allowed_file(file.filename):
+<input type="file"
+class="form-control mb-3"
+name="notice"
+accept=".pdf"
+required>
 
-            filename = secure_filename(file.filename)
-            filename = datetime.now().strftime("%Y%m%d%H%M%S_") + filename
+<button class="btn btn-success w-100">
+Upload Notice
+</button>
 
-            file.save(os.path.join(app.config["UPLOAD_FOLDER"], filename))
+</form>
 
-            notice = Notice(
-                memo_no=generate_memo_number(),
-                title=title,
-                category=category,
-                date=date,
-                filename=filename
-            )
-
-            db.session.add(notice)
-            db.session.commit()
-
-            flash("Notice Uploaded Successfully ✅")
-
-            return redirect(url_for("dashboard"))
-
-    return render_template("upload_notice.html")
+{% endblock %}
