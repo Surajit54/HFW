@@ -71,12 +71,18 @@ def notices():
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     if request.method == "POST":
-        user = request.form.get("username")
-        pw = request.form.get("password")
-        if user == "admin" and pw == "Mamam5424":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        # আপনার দেওয়া ইউজারনেম এবং পাসওয়ার্ড চেক করুন
+        if username == "admin" and password == "Mamam5424":
             session["admin"] = True
+            flash("Login Successful!") # সফল হলে মেসেজ দিবে
             return redirect(url_for("dashboard"))
-        flash("ভুল লগইন তথ্য!")
+        
+        # পাসওয়ার্ড ভুল হলে এই মেসেজটি দেখাবে
+        flash("Invalid credentials! Please try again.") 
+
     return render_template("admin_login.html")
 
 @app.route("/dashboard", methods=["GET", "POST"])
@@ -135,3 +141,4 @@ def logout():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000, debug=True)
+
