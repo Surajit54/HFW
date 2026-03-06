@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3 class="mb-4 text-primary"><i class="fa fa-briefcase"></i> Current Recruitments</h3>
+
+<div class="table-responsive">
+    <table class="table table-hover border">
+        <thead class="table-light">
+            <tr>
+                <th>Memo No</th>
+                <th>Title / Subject</th>
+                <th>Published Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for notice in notices %}
+            <tr>
+                <td>{{ notice.memo_no }}</td>
+                <td><strong>{{ notice.title }}</strong></td>
+                <td>{{ notice.date }}</td>
+                <td>
+                    <a href="{{ url_for('download_file', id=notice.id) }}" class="btn btn-sm btn-success">
+                        <i class="fa fa-download"></i> Download Details
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" class="text-center text-muted">No active recruitment notices found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

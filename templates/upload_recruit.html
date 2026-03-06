@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h4 class="mb-4">Upload Recruitment</h4>
+
+<form method="POST"
+action="{{ url_for('upload_recruit') }}"
+enctype="multipart/form-data">
+
+<div class="mb-3">
+<label>Post Name</label>
+<input type="text"
+name="title"
+class="form-control"
+required>
+</div>
+
+<div class="mb-3">
+<label>Details</label>
+<textarea name="details"
+class="form-control"
+required></textarea>
+</div>
+
+<div class="mb-3">
+<label>Start Date</label>
+<input type="date"
+name="start_date"
+class="form-control"
+required>
+</div>
+
+<div class="mb-3">
+<label>End Date</label>
+<input type="date"
+name="end_date"
+class="form-control"
+required>
+</div>
+
+<div class="mb-3">
+<label>Upload PDF</label>
+<input type="file"
+name="pdf"
+accept="application/pdf"
+class="form-control"
+required>
+</div>
+
+<button class="btn btn-success">
+Upload Recruitment
+</button>
+
+</form>
+
+{% endblock %}
