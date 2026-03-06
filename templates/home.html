@@ -4,18 +4,21 @@
 
 <div class="container mt-4">
 
-<h4 class="mb-3">Notice Board</h4>
+<h3 class="mb-3">Notice Board</h3>
 
 <table class="table table-bordered table-striped">
 
 <thead class="table-dark">
 
 <tr>
-<th style="width:60px;">#</th>
+
+<th>#</th>
 <th>Memo No</th>
 <th>Title</th>
-<th style="width:150px;">Date</th>
-<th style="width:120px;">Download</th>
+<th>Category</th>
+<th>Date</th>
+<th>Download</th>
+
 </tr>
 
 </thead>
@@ -32,14 +35,15 @@
 
 <td>{{ n.title }}</td>
 
+<td>{{ n.category }}</td>
+
 <td>{{ n.date }}</td>
 
 <td>
 
-<a href="{{ url_for('download_file', id=n.id) }}"
-class="btn btn-primary btn-sm">
+<a href="/download/{{n.id}}" class="btn btn-primary btn-sm">
 
-Download
+Download ({{n.downloads}})
 
 </a>
 
